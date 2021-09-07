@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -15,6 +17,7 @@ class AppList extends StatefulWidget {
 
 class _AppListState extends State<AppList> with TickerProviderStateMixin {
   late AnimationController _opacityController;
+  final ScrollController _scrollController = new ScrollController();
 
   @override
   void initState() {
@@ -46,12 +49,20 @@ class _AppListState extends State<AppList> with TickerProviderStateMixin {
     });
   }
 
+  void onScale(double scale) {
+    if (!visible && scale < 1) {
+      toggleVisibility();
+      _opacityController.forward(from: 1 - scale);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     appData.sort((a, b) => a.compareTo(b));
 
     return Stack(children: [
       GestureDetector(
+          onScaleUpdate: (details) => onScale(details.scale),
           child: Scaffold(
               backgroundColor: Colors.black,
               body: SafeArea(
@@ -86,12 +97,14 @@ class _AppListState extends State<AppList> with TickerProviderStateMixin {
                       ),
                       Expanded(
                         child: CustomScrollView(
+                          controller: _scrollController,
                           slivers: [
                             ...appData
                                 .groupBy((e) => e.substring(0, 1))
                                 .values
                                 .map((value) => AppGroup(
-                                    onHeaderTap: () => toggleVisibility(),
+                                    onHeaderTap: () =>
+                                        toggleVisibility(), //() => _scrollController.jumpTo(value),
                                     apps: value,
                                     header: value[0].substring(0, 1)))
                           ],
@@ -104,7 +117,8 @@ class _AppListState extends State<AppList> with TickerProviderStateMixin {
         visible: visible,
         child: FadeTransition(
           opacity: _opacityController,
-          child: AppSearch(onTap: onSearchTap),
+          child: AppSearch(
+              onTap: onSearchTap, scaleController: _opacityController),
         ),
       )
     ]);

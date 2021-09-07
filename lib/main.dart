@@ -28,6 +28,7 @@ class WindowsPages extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PageView(
+      // physics: NeverScrollableScrollPhysics() | ClampingScrollPhysics(),
       controller: controller,
       children: [XGrid(), AppList()],
       scrollDirection: Axis.horizontal,
