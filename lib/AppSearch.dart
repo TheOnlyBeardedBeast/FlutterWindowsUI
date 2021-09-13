@@ -9,12 +9,14 @@ class AppSearch extends StatefulWidget {
   final void Function()? onTap;
   final AnimationController scaleController;
   final AnimationController opacityController;
+  final List<String> highlightedKeys;
 
   const AppSearch(
       {Key? key,
       this.onTap,
       required this.scaleController,
-      required this.opacityController})
+      required this.opacityController,
+      required this.highlightedKeys})
       : super(key: key);
 
   @override
@@ -53,7 +55,11 @@ class _AppSearchState extends State<AppSearch> {
                     ...gridData.map((e) => Center(
                           child: Text(
                             e,
-                            style: TextStyle(color: Colors.white, fontSize: 32),
+                            style: TextStyle(
+                                color: widget.highlightedKeys.indexOf(e) > -1
+                                    ? Colors.white
+                                    : Colors.white.withAlpha(124),
+                                fontSize: 32),
                           ),
                         )),
                     Icon(

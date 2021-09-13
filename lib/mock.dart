@@ -105,8 +105,7 @@ List<String> appData = [
   "hole"
 ];
 
-const List<String> gridData = [
-  "#",
+const List<String> alphabetical = [
   "A",
   "B",
   "C",
@@ -134,6 +133,10 @@ const List<String> gridData = [
   "Y",
   "Z"
 ];
+
+const String other = "#";
+
+const List<String> gridData = [other, ...alphabetical];
 
 List<ITile> datatiles = [
   ITile(TileSize.S, GridPosition(x: 0, y: 0), 0),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'AppList.dart';
+import 'KeepAlivePage.dart';
 import 'XGrid.dart';
 
 void main() {
@@ -30,7 +31,10 @@ class WindowsPages extends StatelessWidget {
     return PageView(
       // physics: NeverScrollableScrollPhysics() | ClampingScrollPhysics(),
       controller: controller,
-      children: [XGrid(), AppList()],
+      children: [
+        KeepAlivePage(child: XGrid()),
+        KeepAlivePage(child: AppList())
+      ],
       scrollDirection: Axis.horizontal,
     );
   }

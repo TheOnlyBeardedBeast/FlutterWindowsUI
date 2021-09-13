@@ -1,9 +1,10 @@
+import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class AppGroup extends StatelessWidget {
-  final List<String> apps;
+  final List<Application> apps;
   final String header;
   final void Function()? onHeaderTap;
   const AppGroup(
@@ -14,7 +15,7 @@ class AppGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverStickyHeader(
       header: Container(
-        height: 60.0,
+        height: 50.0,
         color: Colors.black,
         padding: EdgeInsets.symmetric(horizontal: 10.0),
         alignment: Alignment.centerLeft,
@@ -34,9 +35,9 @@ class AppGroup extends StatelessWidget {
             children: [
               Container(
                 color: Colors.blue,
-                height: 40,
-                width: 40,
-                margin: EdgeInsets.all(10),
+                height: 50,
+                width: 50,
+                margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                 child: Center(
                   child: Icon(
                     PhosphorIcons.placeholder,
@@ -45,9 +46,13 @@ class AppGroup extends StatelessWidget {
                   ),
                 ),
               ),
-              Text(
-                apps[i].substring(0, 1).toUpperCase() + apps[i].substring(1),
-                style: TextStyle(color: Colors.white, fontSize: 20),
+              Expanded(
+                child: Text(
+                  apps[i].appName,
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
+                ),
               ),
             ],
           ),

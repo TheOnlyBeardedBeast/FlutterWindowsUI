@@ -1,3 +1,4 @@
+import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:wingrid/GestureScrollView.dart';
@@ -33,6 +34,8 @@ class _AppListState extends State<AppList> with TickerProviderStateMixin {
         value: 2,
         lowerBound: 1,
         upperBound: 2);
+
+    this.getApps();
     super.initState();
   }
 
@@ -41,6 +44,22 @@ class _AppListState extends State<AppList> with TickerProviderStateMixin {
     _opacityController.dispose();
     _scaleController.dispose();
     super.dispose();
+  }
+
+  List<Application> _apps = [];
+  Map<String, List<Application>> _groupedApps = <String, List<Application>>{};
+
+  Future<void> getApps() async {
+    List<Application> apps = await DeviceApps.getInstalledApplications();
+    apps.sort((a, b) => a.appName.compareTo(b.appName));
+
+    setState(() {
+      this._apps = apps;
+      _groupedApps = apps.groupBy((e) =>
+          alphabetical.indexOf(e.appName.substring(0, 1).toUpperCase()) > -1
+              ? e.appName.substring(0, 1).toUpperCase()
+              : "#");
+    });
   }
 
   bool visible = false;
@@ -65,15 +84,13 @@ class _AppListState extends State<AppList> with TickerProviderStateMixin {
   void onScale(double scale) {
     if (!visible && scale < 1) {
       toggleVisibility();
-      _opacityController.forward(from: 1 - scale);
+      _opacityController.forward();
       _scaleController.reverse(from: 2);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    appData.sort((a, b) => a.compareTo(b));
-
     return Stack(children: [
       GestureDetector(
           onScaleUpdate: (details) => onScale(details.scale),
@@ -84,7 +101,7 @@ class _AppListState extends State<AppList> with TickerProviderStateMixin {
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(5.0),
                       child: TextField(
                         textAlignVertical: TextAlignVertical.center,
                         style: TextStyle(
@@ -94,10 +111,12 @@ class _AppListState extends State<AppList> with TickerProviderStateMixin {
                           contentPadding: EdgeInsets.all(10),
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.zero,
-                              borderSide: BorderSide(color: Colors.grey)),
+                              borderSide:
+                                  BorderSide(color: Colors.grey, width: 2)),
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.zero,
-                              borderSide: BorderSide(color: Colors.grey)),
+                              borderSide:
+                                  BorderSide(color: Colors.grey, width: 2)),
                           suffixIcon: Icon(
                             PhosphorIcons.magnifyingGlass,
                             color: Colors.grey,
@@ -113,14 +132,11 @@ class _AppListState extends State<AppList> with TickerProviderStateMixin {
                       child: GestureCustomScrollView(
                         controller: _scrollController,
                         slivers: [
-                          ...appData
-                              .groupBy((e) => e.substring(0, 1))
-                              .values
-                              .map((value) => AppGroup(
-                                  onHeaderTap: () =>
-                                      toggleVisibility(), //() => _scrollController.jumpTo(value),
-                                  apps: value,
-                                  header: value[0].substring(0, 1)))
+                          ..._groupedApps.values.map((value) => AppGroup(
+                              onHeaderTap: () =>
+                                  toggleVisibility(), //() => _scrollController.jumpTo(value),
+                              apps: value,
+                              header: value[0].appName.substring(0, 1)))
                         ],
                       ),
                     ),
@@ -133,6 +149,7 @@ class _AppListState extends State<AppList> with TickerProviderStateMixin {
         child: FadeTransition(
           opacity: _opacityController,
           child: AppSearch(
+            highlightedKeys: _groupedApps.keys.toList(),
             onTap: onSearchTap,
             scaleController: _scaleController,
             opacityController: _opacityController,
