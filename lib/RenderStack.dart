@@ -7,6 +7,7 @@ import 'TileSize.dart';
 
 typedef TileSelectionCallback = void Function(int index);
 
+// ignore: non_constant_identifier_names
 Widget RenderStack(BuildContext context,
     {List<ITile> tiles = const [],
     double spacing = 5,

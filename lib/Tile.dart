@@ -12,12 +12,12 @@ class CalculationResult {
 }
 
 class Tile extends StatefulWidget {
-  double gridUnit;
-  double x;
-  double y;
+  final double gridUnit;
+  final double x;
+  final double y;
   TileSize size = TileSize.S;
   double spacing = 5;
-  void Function()? onSelection;
+  final void Function()? onSelection;
   bool selected = false;
   bool anySelected = false;
 
